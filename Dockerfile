@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 ARG DEBIAN_FRONTEND=noninteractive
 COPY . /home
 RUN apt-get update && \
@@ -9,6 +9,8 @@ RUN apt-get update && \
     libsm6 \
     libxext6
 WORKDIR /home
-RUN pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 --extra-index-url https://download.pytorch.org/whl/cu113
-RUN pip install pytorch-quantization==2.1.2 --extra-index-url https://pypi.ngc.nvidia.com
-RUN pip install super-gradients==3.1.3
+RUN pip install torch torchvision torchaudio
+RUN pip install pytorch-quantization
+RUN pip install -q git+https://github.com/Deci-AI/super-gradients.git
+RUN sed -i -e "s/sghub.deci.ai/sg-hub-nv.s3.amazonaws.com/g" /usr/local/lib/python3.10/dist-packages/super_gradients/training/pretrained_models.py
+RUN sed -i -e "s/sghub.deci.ai/sg-hub-nv.s3.amazonaws.com/g" /usr/local/lib/python3.10/dist-packages/super_gradients/training/utils/checkpoint_utils.py
